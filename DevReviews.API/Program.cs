@@ -1,6 +1,11 @@
+using DevReviews.API.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Transient, Scoped, Singleton
+builder.Services.AddSingleton<DevReviewsDbContext>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
