@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DevReviews.API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevReviews.API.Controllers
 {
@@ -29,16 +30,16 @@ namespace DevReviews.API.Controllers
 
         // POST para api/products
         [HttpPost]
-        public IActionResult Post(object model)
+        public IActionResult Post(AddProductInputModel model)
         {
             // Add o objeto
             // Se tiver erros de validação, retornar BadRequest()
-            return CreatedAtAction(nameof(GetById), new { id = 1 /* id do model*/ }, model);
+            return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
         }
 
         // PUT para api/products/{id}
         [HttpPut("{id}")]
-        public IActionResult Put(int id, object model)
+        public IActionResult Put(int id, UpdateProductInputModel model)
         {
             // Se tiver erros de validação, retornar BadRequest()
             // Se não existir produto com o id especificado, retornar NotFound()

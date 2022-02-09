@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DevReviews.API.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevReviews.API.Controllers
 {
@@ -17,11 +18,11 @@ namespace DevReviews.API.Controllers
 
         // POST api/products/1/productreviews
         [HttpPost]
-        public IActionResult Post(int productId, object model)
+        public IActionResult Post(int productId, AddProductReviewInputModel model)
         {
             // Se estiver com dados inválidos, retornar BadRequest()
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetById), new { id = 1, productId = 2 }, model);
         }
     }
 }
