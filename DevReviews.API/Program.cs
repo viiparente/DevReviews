@@ -1,4 +1,5 @@
 using DevReviews.API.Persistence;
+using DevReviews.API.Profiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Transient, Scoped, Singleton
 builder.Services.AddSingleton<DevReviewsDbContext>();
+
+builder.Services.AddAutoMapper(typeof(ProductProfile));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
