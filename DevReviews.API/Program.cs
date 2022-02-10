@@ -1,12 +1,19 @@
 using DevReviews.API.Persistence;
 using DevReviews.API.Profiles;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DevReviewsCs");
 
-// Transient, Scoped, Singleton
-builder.Services.AddSingleton<DevReviewsDbContext>();
+builder.Services
+    .AddDbContext<DevReviewsDbContext>(o =>
+        o.UseSqlServer(connectionString));
+
+//builder.Services
+//    .AddDbContext<DevReviewsDbContext>(o =>
+//        o.UseInMemoryDatabase("DevReviewsCs"));
 
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 
