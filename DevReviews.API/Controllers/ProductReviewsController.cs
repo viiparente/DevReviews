@@ -1,4 +1,6 @@
-﻿using DevReviews.API.Models;
+﻿using DevReviews.API.Entities;
+using DevReviews.API.Models;
+using DevReviews.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevReviews.API.Controllers
@@ -7,22 +9,44 @@ namespace DevReviews.API.Controllers
     [Route("api/products/{productId}/productreviews")]
     public class ProductReviewsController : ControllerBase
     {
+
+        private readonly DevReviewsDbContext _dbContext;
+        public ProductReviewsController(DevReviewsDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         // GET api/products/1/productreviews/5
         [HttpGet("{id}")]
         public IActionResult GetById(int productId, int id)
         {
-            // Se não existir com o id especificado, retornar NotFound()
+            var product = _dbContext.Products.SingleOrDefault(p => p.Id == productId);
+            if (product == null)
+                return NotFound();
 
-            return Ok();
+            var productreview = _dbContext.Products
+                .Select(e => e.Reviews)
+                .Select(e => e.SingleOrDefault(e => e.Id == id));
+
+            if (productreview == null)
+                NotFound();
+
+            return Ok(productreview);
         }
 
         // POST api/products/1/productreviews
         [HttpPost]
         public IActionResult Post(int productId, AddProductReviewInputModel model)
         {
-            // Se estiver com dados inválidos, retornar BadRequest()
+            var product = _dbContext.Products.SingleOrDefault(p => p.Id == productId);
+            if (product == null)
+                return NotFound();
 
-            return CreatedAtAction(nameof(GetById), new { id = 1, productId = 2 }, model);
+            var productReview = new ProductReview(model.Author, model.Rating, model.Comments, productId);
+
+            product.AddReview(productReview);
+
+            return CreatedAtAction(nameof(GetById), new { id = productReview.Id, productId = productId }, model);
         }
     }
 }

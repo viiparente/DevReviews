@@ -21,8 +21,12 @@ namespace DevReviews.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var products = _dbContext.Products; 
-            return Ok(products);
+            var products = _dbContext.Products;
+
+            var productsViewModel = products.
+                Select(p => new ProductViewModel(p.Id, p.Title, p.Price));
+
+            return Ok(productsViewModel);
         }
 
         // GET para api/products/{id}
@@ -33,7 +37,21 @@ namespace DevReviews.API.Controllers
             if (product == null)
                 return NotFound();
 
-            return Ok(product);
+            var reviewsViewModel = product.Reviews
+                .Select(r => new ProductReviewViewModel(r.Id, r.Author, r.Rating, r.Comments, r.RegisteredAt))
+                .ToList();
+
+            var productDetails = new ProductDetailsViewModel(
+                product.Id,
+                product.Title,
+                product.Description,
+                product.Price,
+                product.RegisteredAt,
+                reviewsViewModel
+            );
+
+
+            return Ok(productDetails);
         }
 
         // POST para api/products

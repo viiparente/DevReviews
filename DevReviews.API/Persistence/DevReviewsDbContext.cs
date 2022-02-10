@@ -10,5 +10,6 @@ namespace DevReviews.API.Persistence
         }
 
         public List<Product> Products { get; set; }
+
     }
 }
