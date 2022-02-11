@@ -20,6 +20,12 @@ namespace DevReviews.API.Controllers
         }
 
         // GET api/products/1/productreviews/5
+        /// <summary>
+        /// Retorna o Product Details
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="id"></param>
+        /// <returns>Product Details</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int productId, int id)
         {
@@ -34,6 +40,13 @@ namespace DevReviews.API.Controllers
         }
 
         // POST api/products/1/productreviews
+        /// <summary>
+        /// Insere um review no product
+        /// </summary>
+        /// <remarks>{ "rating": 10,"author": "Parente","comments": "Muito Bom"}</remarks>
+        /// <param name="productId"></param>
+        /// <param name="model"></param>
+        /// <returns> Id do Review relacionado ao product </returns>
         [HttpPost]
         public async Task<IActionResult> Post(int productId, AddProductReviewInputModel model)
         {
