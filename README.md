@@ -4,7 +4,7 @@
 Foi desenvolvida uma API REST completa em .NET de gerenciamento de produtos e suas avaliações de um e-Commerce.
 
 ## Tecnologias e práticas utilizadas
-* ASP.NET Core com .NET 5
+* ASP.NET Core com .NET 6
 * Entity Framework Core
 * Azure SQL Server
 * Swagger
@@ -20,8 +20,23 @@ Foi desenvolvida uma API REST completa em .NET de gerenciamento de produtos e su
 * Cadastro e Detalhes de uma avaliação
 
 
-## Build, EF Core Migrations using CLI and Run
+## Executando o projeto em sua maquina local
+-  Clone o projeto
+```console
+git clone https://github.com/viiparente/DevReviews.git
+```
+Caso não tenha uma instancia local do SQL Server Express, siga o seguinte passo:
+ * Abra o arquivo Program.cs 
+ * Comente a linha onde tem o UseSqlServer e descomente o UseInMemoryDatabase
+ ```cs
+//builder.Services.AddDbContext<DevReviewsDbContext>(o => o.UseSqlServer(connectionString));
+```
+```cs
+builder.Services.AddDbContext<DevReviewsDbContext>(o => o.UseInMemoryDatabase("DevReviewsCs"));
+```
 
+
+* Agora vá na pasta onde está o arquivo de solução do projeto (DevReviews.sln) e rode no terminal
 ```console
 dotnet restore
 ```
@@ -35,7 +50,10 @@ dotnet ef migrations add InitialMigration -o Persistence/Migrations
 dotnet ef database update
 ```
 ```console
-dotnet run --project ./DevReviews.API/DevReviews.API.csproj
+cd .\DevReviews.API\
+```
+```console
+dotnet run
 ```
 
 ##
