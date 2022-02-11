@@ -3,11 +3,27 @@ using DevReviews.API.Persistence.Repositories;
 using DevReviews.API.Profiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+{
+    var settings = config.Build();
+    Serilog.Log.Logger = new LoggerConfiguration()
+        .Enrich.FromLogContext()
+        .WriteTo.MSSqlServer(settings.GetConnectionString("DevReviewsCs"),
+        sinkOptions: new MSSqlServerSinkOptions()
+        {
+            AutoCreateSqlTable = true,
+            TableName = "Logs"
+        })
+        .CreateLogger();
+}).UseSerilog();
+
 var connectionString = builder.Configuration.GetConnectionString("DevReviewsCs");
 
 builder.Services

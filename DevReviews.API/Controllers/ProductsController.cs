@@ -5,6 +5,7 @@ using DevReviews.API.Persistence;
 using DevReviews.API.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace DevReviews.API.Controllers
 {
@@ -32,6 +33,8 @@ namespace DevReviews.API.Controllers
             var products = await _repository.GetAllAsync();
 
             var productsViewModel = _mapper.Map<List<ProductViewModel>>(products);
+
+            Log.Information("Método GetAll de Produtos chamado!");
 
             return Ok(productsViewModel);
         }
@@ -75,6 +78,8 @@ namespace DevReviews.API.Controllers
 
             await _repository.AddAsync(product);
 
+            Log.Information("Método POST (Cadastro de Produto) chamado!");
+
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, model);
         }
 
@@ -100,6 +105,8 @@ namespace DevReviews.API.Controllers
             product.Update(model.Description, model.Price);
 
             await _repository.UpdateAsync(product);
+
+            Log.Information("Método Put (Atualização de Produto) finalizado!");
 
             return NoContent();
         }

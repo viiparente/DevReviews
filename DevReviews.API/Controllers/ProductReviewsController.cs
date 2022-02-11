@@ -4,6 +4,7 @@ using DevReviews.API.Models;
 using DevReviews.API.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace DevReviews.API.Controllers
 {
@@ -36,6 +37,8 @@ namespace DevReviews.API.Controllers
 
             var productDetails = _mapper.Map<ProductReviewDetailsViewModel>(productReview);
 
+            Log.Information("Método GetById (Retorna o Product Details) finalizado!");
+
             return Ok(productDetails);
         }
 
@@ -53,6 +56,8 @@ namespace DevReviews.API.Controllers
             var productReview = new ProductReview(model.Author, model.Rating, model.Comments, productId);
 
             await _repository.AddReviewAsync(productReview);
+
+            Log.Information("Método Post (Insere um review no product) finalizado!");
 
             return CreatedAtAction(nameof(GetById), new { id = productReview.Id, productId = productId }, model);
         }
