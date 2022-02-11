@@ -2,6 +2,7 @@
 using DevReviews.API.Models;
 using DevReviews.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DevReviews.API.Controllers
 {
@@ -25,6 +26,7 @@ namespace DevReviews.API.Controllers
                 return NotFound();
 
             var productreview = _dbContext.Products
+                .Include(p => p.Reviews)
                 .Select(e => e.Reviews)
                 .Select(e => e.SingleOrDefault(e => e.Id == id));
 
@@ -38,13 +40,14 @@ namespace DevReviews.API.Controllers
         [HttpPost]
         public IActionResult Post(int productId, AddProductReviewInputModel model)
         {
-            var product = _dbContext.Products.SingleOrDefault(p => p.Id == productId);
+            var product = _dbContext.Products.Include(p => p.Reviews).SingleOrDefault(p => p.Id == productId);
             if (product == null)
                 return NotFound();
 
             var productReview = new ProductReview(model.Author, model.Rating, model.Comments, productId);
 
             product.AddReview(productReview);
+            _dbContext.SaveChanges();
 
             return CreatedAtAction(nameof(GetById), new { id = productReview.Id, productId = productId }, model);
         }
