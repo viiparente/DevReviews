@@ -2,6 +2,7 @@
 using DevReviews.API.Entities;
 using DevReviews.API.Models;
 using DevReviews.API.Persistence;
+using DevReviews.API.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,20 +13,20 @@ namespace DevReviews.API.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly DevReviewsDbContext _dbContext;
+        private readonly IProductRepository _repository;
         private readonly IMapper _mapper;
 
-        public ProductsController(DevReviewsDbContext dbContext, IMapper mapper)
+        public ProductsController(IProductRepository repository, IMapper mapper)
         {
-            _dbContext = dbContext;
             _mapper = mapper;
+            _repository = repository;
         }
 
         // GET para api/products
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var products = await _dbContext.Products.ToListAsync();
+            var products = await _repository.GetAllAsync();
 
             var productsViewModel = _mapper.Map<List<ProductViewModel>>(products);
 
@@ -36,10 +37,7 @@ namespace DevReviews.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var product = await _dbContext
-                .Products
-                .Include(p => p.Reviews)
-                .SingleOrDefaultAsync(p => p.Id == id);
+            var product = await _repository.GetDetailsByIdAsync(id);
 
             if (product == null)
                 return NotFound();
@@ -55,8 +53,7 @@ namespace DevReviews.API.Controllers
         {
             var product = new Product(model.Title, model.Description, model.Price);
 
-            await _dbContext.Products.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
+            await _repository.AddAsync(product);
 
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, model);
         }
@@ -68,15 +65,14 @@ namespace DevReviews.API.Controllers
             if (model.Description.Length > 50)
                 return BadRequest();
 
-            var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == id);
+            var product = await _repository.GetByIdAsync(id);
 
             if (product == null)
                 return NotFound();
 
             product.Update(model.Description, model.Price);
 
-            //_dbContext.Products.Update(product);
-            await _dbContext.SaveChangesAsync();
+            await _repository.UpdateAsync(product);
 
             return NoContent();
         }

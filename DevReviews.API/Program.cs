@@ -1,4 +1,5 @@
 using DevReviews.API.Persistence;
+using DevReviews.API.Persistence.Repositories;
 using DevReviews.API.Profiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,8 @@ builder.Services
 //builder.Services
 //    .AddDbContext<DevReviewsDbContext>(o =>
 //        o.UseInMemoryDatabase("DevReviewsCs"));
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 
