@@ -44,13 +44,13 @@ dotnet restore
 dotnet build --no-restore
 ```
 ```console
+cd .\DevReviews.API\
+```
+```console
 dotnet ef migrations add InitialMigration -o Persistence/Migrations
 ```
 ```console
 dotnet ef database update
-```
-```console
-cd .\DevReviews.API\
 ```
 ```console
 dotnet run
