@@ -23,9 +23,9 @@ namespace DevReviews.API.Controllers
 
         // GET para api/products
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var products = _dbContext.Products;
+            var products = await _dbContext.Products.ToListAsync();
 
             var productsViewModel = _mapper.Map<List<ProductViewModel>>(products);
 
@@ -34,12 +34,12 @@ namespace DevReviews.API.Controllers
 
         // GET para api/products/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var product = _dbContext
+            var product = await _dbContext
                 .Products
                 .Include(p => p.Reviews)
-                .SingleOrDefault(p => p.Id == id);
+                .SingleOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
                 return NotFound();
@@ -51,24 +51,24 @@ namespace DevReviews.API.Controllers
 
         // POST para api/products
         [HttpPost]
-        public IActionResult Post(AddProductInputModel model)
+        public async Task<IActionResult> Post(AddProductInputModel model)
         {
             var product = new Product(model.Title, model.Description, model.Price);
 
-            _dbContext.Products.Add(product);
-            _dbContext.SaveChanges();
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, model);
         }
 
         // PUT para api/products/{id}
         [HttpPut("{id}")]
-        public IActionResult Put(int id, UpdateProductInputModel model)
+        public async Task<IActionResult> Put(int id, UpdateProductInputModel model)
         {
             if (model.Description.Length > 50)
                 return BadRequest();
 
-            var product = _dbContext.Products.SingleOrDefault(p => p.Id == id);
+            var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
                 return NotFound();
@@ -76,7 +76,7 @@ namespace DevReviews.API.Controllers
             product.Update(model.Description, model.Price);
 
             //_dbContext.Products.Update(product);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return NoContent();
         }
